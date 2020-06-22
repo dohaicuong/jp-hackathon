@@ -31,5 +31,6 @@ type NotificationTask {
   frequencies: [Frequency!]
 }
 
+union Question = RateQuestion | ResponseQuestion
 type RateQuestion {}
 type ResponseQuestion {}
