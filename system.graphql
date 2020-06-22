@@ -1,11 +1,11 @@
 ## TODO type structure decision
 scalar Frequency
 
-type Namespace {
+type OrgUnit {
   id: ID!
   name: String!
 
-  namespaces: [Namespace!]
+  orgUnits: [OrgUnit!]
   employees: [User!]
 }
 
