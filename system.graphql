@@ -1,0 +1,35 @@
+## TODO type structure decision
+scalar Frequency
+
+type Company {
+  id: ID!
+  name: String!
+
+  divisions: [Division!]
+}
+
+type Division {
+  id: ID!
+  name: String!
+
+  employees: [User!]
+}
+
+type User {
+  id: ID!
+  name: String!
+  role: String!
+}
+
+type NotificationTask {
+  id: ID!
+  questions: [Question!]
+
+  divisions: [Division!]
+  users: [User!]
+
+  frequencies: [Frequency!]
+}
+
+type RateQuestion {}
+type ResponseQuestion {}
