@@ -4,11 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "serve": "graphql-inspector serve system.graphql"
+    "start": "node index.js"
   },
   "dependencies": {
-    "@graphql-inspector/cli": "^2.1.0",
-    "@graphql-inspector/serve-command": "^2.1.0",
+    "apollo-server": "^2.15.0",
     "graphql": "^15.1.0"
   }
 }
