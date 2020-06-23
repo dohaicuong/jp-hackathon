@@ -1,5 +1,8 @@
-FROM kamilkisiela/graphql-inspector
+FROM node:14.4.0-alpine3.12
 
-COPY ./system.graphql .
+COPY ./package.json .
+RUN yarn
 
-ENTRYPOINT graphql-inspector serve system.graphql
+COPY . .
+
+ENTRYPOINT yarn start
