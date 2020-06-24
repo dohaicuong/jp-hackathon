@@ -6,11 +6,6 @@ const app = express()
 const server = new ApolloServer({
   typeDefs: require('./schema'),
   mocks: true,
-  onHealthCheck: () => {
-    return new Promise(resolve => {
-      resolve()
-    })
-  }
 })
 
 app.get('/graphql/server-health', (req, res) => {
