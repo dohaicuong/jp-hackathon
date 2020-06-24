@@ -5,9 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EmployeeCentre"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="250" Width="500"
+        WindowStyle="None"
+        ResizeMode="NoResize">
+    <Window.DataContext>
+        <local:NotificationViewModel/>
+    </Window.DataContext>
     <Grid>
-        <Button x:Name="btnTest" Content="Colour Changer" HorizontalAlignment="Center" VerticalAlignment="Center" Height="70" Width="110"/>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <Label Content="{Binding NotificationModel.TextBody}" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"/>
+        <ItemsControl ItemsSource="{Binding NotificationModel.Buttons}" Grid.Row="2" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10" x:Name="icButtonContainer">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button x:Name="btnTest" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AliceBlue">
+                        <StackPanel>
+                            <Image Source="{Binding Image}"/>
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Window>

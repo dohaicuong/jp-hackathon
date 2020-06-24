@@ -8,12 +8,12 @@
     </ContextMenu>
 
     <tb:TaskbarIcon x:Key="notifyIcon"
-                    IconSource="smile.ico"
+                    IconSource="images/Smile.ico"
                     ToolTipText="Double click to access control panel"
                     DoubleClickCommand="{Binding showWindowCommand}"
                     ContextMenu="{StaticResource sysTrayMenu}">
         <tb:TaskbarIcon.DataContext>
-            <local:EmployeeCentreViewModel/>
+            <local:NotificationViewModel/>
         </tb:TaskbarIcon.DataContext>
     </tb:TaskbarIcon>
     

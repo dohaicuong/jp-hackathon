@@ -7,17 +7,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="images\Asleep.ico" />
+    <None Remove="images\Big Cry.ico" />
+    <None Remove="images\Cry.ico" />
+    <None Remove="images\Down.ico" />
+    <None Remove="images\Frustrated.ico" />
+    <None Remove="images\Happy.ico" />
+    <None Remove="images\Overtired.ico" />
+    <None Remove="images\Smile.ico" />
+    <None Remove="images\Unsure.ico" />
     <None Remove="smile.ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GraphQL.Client" Version="3.1.3" />
+    <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft" Version="3.1.3" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf.NetCore" Version="1.0.11" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="smile.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="images\Asleep.ico" />
+    <Resource Include="images\Big Cry.ico" />
+    <Resource Include="images\Cry.ico" />
+    <Resource Include="images\Down.ico" />
+    <Resource Include="images\Frustrated.ico" />
+    <Resource Include="images\Happy.ico" />
+    <Resource Include="images\Overtired.ico" />
+    <Resource Include="images\Smile.ico" />
+    <Resource Include="images\Unsure.ico" />
   </ItemGroup>
 
 </Project>

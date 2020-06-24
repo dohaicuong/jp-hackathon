@@ -11,6 +11,11 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Hardcodet.Wpf.TaskbarNotification;
+using GraphQL.Client;
+using GraphQL;
+using GraphQL.Client.Abstractions;
+using GraphQL.Client.Http;
+using GraphQL.Client.Serializer.Newtonsoft;
 
 namespace EmployeeCentre {
     /// <summary>
@@ -30,7 +35,24 @@ namespace EmployeeCentre {
             ThreadPool.QueueUserWorkItem(workerThreadMain, cts.Token);
         }
 
-        private void workerThreadMain(object state) {
+        private async void workerThreadMain(object state) {
+            GraphQLHttpClient graphQLClient = new GraphQLHttpClient("http://hackathon-lb-69098931.ap-southeast-2.elb.amazonaws.com/graphql", new NewtonsoftJsonSerializer());
+            GraphQLRequest request = new GraphQLRequest {
+                Query = @" {
+                    tasks {
+                        id
+                        questions {
+                            question
+                        }
+                        users {
+                            name
+                            role
+                        }
+                    }   
+                }"
+            };
+
+            var response = await graphQLClient.SendQueryAsync<ResponseType>(request);
             CancellationToken token = (CancellationToken)state;
             Timer timer = new Timer(timerCallback, null, 0, 5000);
             while (true) {
@@ -50,14 +72,6 @@ namespace EmployeeCentre {
                     Current.MainWindow.Show();
                 }
             });
-        }
-
-
-        public async void ScheduleAction(Action action, DateTime executionTime) {
-            Current.MainWindow.Show();
-            // Wait for 
-            await Task.Delay((int)executionTime.Subtract(DateTime.Now).TotalMilliseconds);
-            action();
         }
     }
 }

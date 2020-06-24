@@ -1,12 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
 namespace EmployeeCentre {
-    class EmployeeCentreViewModel {
+    class NotificationViewModel : INotifyPropertyChanged {
+
+        private NotificationModel notificationModel = new NotificationModel();
+
+        public CheckBoxModel CheckBoxModel {
+            get {
+                return notificationModel.Checkbox;
+            }
+        }
+
         public ICommand showWindowCommand { 
             get {
                 return new DelegateCommand {
@@ -34,6 +44,14 @@ namespace EmployeeCentre {
                         Application.Current.MainWindow.Show();
                     },
                 };
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void onPropertyChangeEventHandler(string propertyName) {
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
