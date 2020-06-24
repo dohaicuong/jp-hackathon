@@ -1,4 +1,7 @@
-const { ApolloServer } = require('apollo-server')
+const express = require('express')
+const { ApolloServer } = require('apollo-server-express')
+
+const app = express()
 
 const server = new ApolloServer({
   typeDefs: require('./schema'),
@@ -10,9 +13,10 @@ const server = new ApolloServer({
   }
 })
 
-server
-  .listen(4000)
-  .then(({ url }) => {
-    console.log(`🚀  Server ready at ${url}`)
-    console.log(`health check at: ${url}.well-known/apollo/server-health`)
+server.applyMiddleware({ app, path: '/graphql' })
+
+app
+  .listen({ port: 4000 }, () => {
+    console.log(`🚀  Server ready at ${server.graphqlPath}`)
+    console.log(`health check at: ${server.graphqlPath}/.well-known/apollo/server-health`)
   })
