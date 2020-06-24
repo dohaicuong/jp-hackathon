@@ -1,0 +1,14 @@
+﻿<Application x:Class="EmployeeCentre.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown"
+             xmlns:local="clr-namespace:EmployeeCentre">
+    
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="IconResource.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>    
+    </Application.Resources>
+</Application>
