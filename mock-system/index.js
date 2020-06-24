@@ -13,6 +13,10 @@ const server = new ApolloServer({
   }
 })
 
+app.get('/graphql/server-health', (req, res) => {
+  res.status(200).send({"status":"pass" })
+})
+
 server.applyMiddleware({ app, path: '/graphql' })
 
 app
