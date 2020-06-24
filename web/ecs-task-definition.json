@@ -1,15 +1,15 @@
 {
-  "family": "mock-system",
+  "family": "frontend",
   "executionRoleArn": "arn:aws:iam::413300428533:role/eric_ecs_role",
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "mock-system",
-      "image": "413300428533.dkr.ecr.ap-southeast-2.amazonaws.com/mock-system:latest",
+      "name": "web",
+      "image": "413300428533.dkr.ecr.ap-southeast-2.amazonaws.com/web:latest",
       "portMappings": [
         {
-          "containerPort": 4000,
-          "hostPort": 4000,
+          "containerPort": 3000,
+          "hostPort": 3000,
           "protocol": "tcp"
         }
       ],
