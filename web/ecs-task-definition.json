@@ -13,14 +13,6 @@
           "protocol": "tcp"
         }
       ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "frontend",
-          "awslogs-region": "ap-southeast-2",
-          "awslogs-stream-prefix": "frontend-web"
-        }
-      },
       "essential": true
     }
   ],
