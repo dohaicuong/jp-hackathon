@@ -1,9 +1,9 @@
 const { gql } = require('apollo-server')
 
 module.exports = gql`
-  scalar Frequency
-  scalar Answer
-  scalar DateTime
+  scalar Frequency # cron expression format https://crontab.guru/
+  scalar Answer # either optionId or String(for optional response)
+  scalar DateTime # ISO string format YYYY-MM-DDThh:mm:ss.sssZ
 
   interface Node { id: ID! }
 
@@ -21,6 +21,12 @@ module.exports = gql`
     login(input: UserLoginInput!): AuthPayload
 
     organisationCreate(input: OrgCreateInput!): OrgCreatePayload
+    
+    employeeAdd(input: EmployeeAddInput!): EmployeeAddPayload
+
+    questionCreate(input: QuestionCreateInput!): QuestionCreatePayload
+
+    taskCreate(input: TaskCreateInput!): TaskCreatePayload
 
     reportSend(input: ReportSendInput!): ReportSendPayload
   }
@@ -51,6 +57,39 @@ module.exports = gql`
     organisation: Organisation
   }
 
+  input EmployeeAddInput {
+    branchId: ID!
+
+    name: String!
+    role: String!
+  }
+  type EmployeeAddPayload {
+    employee: User
+  }
+
+  input QuestionCreateInput {
+    question: String!
+    isMultiple: Boolean!
+    isOptionalReponse: Boolean!
+
+    options: [QuestionOptionInput!]
+  }
+  input QuestionOptionInput {
+    label: String
+    logo: String
+  }
+  type QuestionCreatePayload {
+    question: Question
+  }
+
+  input TaskCreateInput {
+    frequencies: [Frequency!]
+    questionIds: [ID!]
+    userIds: [ID!]
+  }
+  type TaskCreatePayload {
+    task: NotificationTask
+  }
 
   input ReportSendInput {
     questionId: ID!
