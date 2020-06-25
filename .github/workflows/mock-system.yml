@@ -3,7 +3,7 @@ on:
     branches: 
       - master
     paths:
-      - 'mock-system/*'
+      - 'mock-system/**'
 
 name: Deploy to Amazon ECS
 
