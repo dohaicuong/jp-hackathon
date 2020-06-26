@@ -29,7 +29,10 @@ jobs:
 
     - name: Build
       id: build-react
-      run: cd web && yarn build
+      run: |
+        cd web 
+        yarn
+        yarn build
 
     - name: Build, tag, and push image to Amazon ECR
       id: build-image

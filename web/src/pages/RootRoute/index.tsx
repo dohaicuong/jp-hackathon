@@ -9,7 +9,6 @@ const RootRoute = () => {
       query RootRouteQuery {
         me {
           id
-          name
         }
       }
     `,
