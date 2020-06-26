@@ -28,7 +28,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build
-      id: build react
+      id: build-react
       run: yarn build
 
     - name: Build, tag, and push image to Amazon ECR
