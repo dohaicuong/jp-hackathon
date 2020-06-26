@@ -19,6 +19,7 @@
     "react": "^0.0.0-experimental-7f28234f8",
     "react-dom": "^0.0.0-experimental-7f28234f8",
     "react-error-boundary": "^2.2.3",
+    "react-hook-form": "^5.7.2",
     "react-relay": "^0.0.0-experimental-94e87455",
     "react-relay-network-modern": "^4.7.2",
     "react-router-dom": "^5.2.0",

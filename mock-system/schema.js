@@ -136,15 +136,23 @@ module.exports = gql`
     role: String!
 
     branch: Branch!
-    tasks: [NotificationTask!]
     account: Account
+    userTask: UserTask
+  }
+
+  type UserTask implements Node {
+    id: ID!
+    version: Int!
+    
+    user: User
+    tasks: [NotificationTask!]
   }
 
   type NotificationTask implements Node {
     id: ID!
     questions: [Question!]
 
-    users: [User!]
+    userTasks: [UserTask!]
     frequencies: [Frequency!]
   }
 
