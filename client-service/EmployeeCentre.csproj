@@ -13,6 +13,8 @@
     <None Remove="images\Down.ico" />
     <None Remove="images\Frustrated.ico" />
     <None Remove="images\Happy.ico" />
+    <None Remove="images\Icon.ico" />
+    <None Remove="images\image-unavailable.png" />
     <None Remove="images\Overtired.ico" />
     <None Remove="images\Smile.ico" />
     <None Remove="images\Unsure.ico" />
@@ -33,6 +35,8 @@
     <Resource Include="images\Down.ico" />
     <Resource Include="images\Frustrated.ico" />
     <Resource Include="images\Happy.ico" />
+    <Resource Include="images\Icon.ico" />
+    <Resource Include="images\image-unavailable.png" />
     <Resource Include="images\Overtired.ico" />
     <Resource Include="images\Smile.ico" />
     <Resource Include="images\Unsure.ico" />

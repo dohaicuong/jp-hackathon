@@ -15,8 +15,16 @@ namespace EmployeeCentre {
     /// Interaction logic for NotificationWindow.xaml
     /// </summary>
     public partial class NotificationWindow : Window {
+        private readonly NotificationViewModel _viewModel;
         public NotificationWindow() {
             InitializeComponent();
+        }
+
+        public NotificationWindow(NotificationViewModel viewModel) {
+            InitializeComponent();
+            _viewModel = viewModel;
+            DataContext = _viewModel;
+            ctrlPrimary.Content = _viewModel;
         }
     }
 }

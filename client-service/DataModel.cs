@@ -6,7 +6,7 @@ namespace EmployeeCentre {
         public UserModel Me { get; set; }
     }
 
-    class UserModel {
+    public class UserModel {
         public string Id { get; set; }
         public string Name { get; set; }
         public string Role { get; set; }
@@ -14,19 +14,19 @@ namespace EmployeeCentre {
         public NotificationModel Notification { get; set; }
     }
 
-    class NotificationModel {
+    public class NotificationModel {
         public string ID { get; set; }
         public int Version { get; set; }
         public List<NotificationQuestionModel> NotificationQuestion { get; set; }
     }
 
-    class NotificationQuestionModel {
+    public class NotificationQuestionModel {
         public string ID { get; set; }
         public QuestionModel Question { get; set; }
         public string Frequency { get; set; }
     }
 
-    class QuestionModel {
+    public class QuestionModel {
         public string ID { get; set; }
         public string Question { get; set; }
         public List<QuestionOptionModel> Options { get; set; }
@@ -34,13 +34,13 @@ namespace EmployeeCentre {
         public bool isOptionalResponse { get; set; }
     }
 
-    class QuestionOptionModel {
+    public class QuestionOptionModel {
         public string ID { get; set; }
         public string Label { get; set; }
         public string Logo { get; set; }
     }
 
-    class BranchModel {
+    public class BranchModel {
         public string ID { get; set; }
         public string Name { get; set; }
     }
