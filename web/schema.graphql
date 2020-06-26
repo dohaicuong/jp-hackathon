@@ -1,0 +1,177 @@
+directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
+
+"""Exposes a URL that specifies the behaviour of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behaviour of this scalar."""
+  url: String!
+) on SCALAR
+
+type Account implements Node {
+  id: ID!
+  email: String!
+  password: String!
+  user: User!
+}
+
+scalar Answer
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type Branch implements Node {
+  id: ID!
+  name: String!
+  division: Division!
+  employees: [User!]
+}
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+scalar DateTime
+
+type Division implements Node {
+  id: ID!
+  name: String!
+  organisation: Organisation!
+  branches: [Branch!]
+}
+
+input EmployeeAddInput {
+  branchId: ID!
+  name: String!
+  role: String!
+}
+
+type EmployeeAddPayload {
+  employee: User
+}
+
+scalar Frequency
+
+type Mutation {
+  signup(input: UserSignupInput!): AuthPayload
+  login(input: UserLoginInput!): AuthPayload
+  organisationCreate(input: OrgCreateInput!): OrgCreatePayload
+  employeeAdd(input: EmployeeAddInput!): EmployeeAddPayload
+  questionCreate(input: QuestionCreateInput!): QuestionCreatePayload
+  taskCreate(input: TaskCreateInput!): TaskCreatePayload
+  reportSend(input: ReportSendInput!): ReportSendPayload
+}
+
+interface Node {
+  id: ID!
+}
+
+type NotificationTask implements Node {
+  id: ID!
+  questions: [Question!]
+  users: [User!]
+  frequencies: [Frequency!]
+}
+
+type Organisation implements Node {
+  id: ID!
+  name: String!
+  divisions: [Division!]
+}
+
+input OrgCreateInput {
+  orgName: String!
+  divisionNames: [String!]
+  brancheNames: [String!]
+}
+
+type OrgCreatePayload {
+  organisation: Organisation
+}
+
+type Query {
+  me: User!
+  node(id: ID!): Node
+}
+
+type Question implements Node {
+  id: ID!
+  question: String!
+  options: [QuestionOption!]
+  isMultiple: Boolean!
+  isOptionalReponse: Boolean!
+}
+
+input QuestionCreateInput {
+  question: String!
+  isMultiple: Boolean!
+  isOptionalReponse: Boolean!
+  options: [QuestionOptionInput!]
+}
+
+type QuestionCreatePayload {
+  question: Question
+}
+
+type QuestionOption implements Node {
+  id: ID!
+  label: String
+  logo: String
+}
+
+input QuestionOptionInput {
+  label: String
+  logo: String
+}
+
+type Report implements Node {
+  id: ID!
+  question: Question!
+  user: User!
+  answer: Answer!
+  createdAt: DateTime!
+}
+
+input ReportSendInput {
+  questionId: ID!
+  answer: Answer
+}
+
+type ReportSendPayload {
+  report: Report
+}
+
+input TaskCreateInput {
+  frequencies: [Frequency!]
+  questionIds: [ID!]
+  userIds: [ID!]
+}
+
+type TaskCreatePayload {
+  task: NotificationTask
+}
+
+scalar Upload
+
+type User implements Node {
+  id: ID!
+  name: String!
+  role: String!
+  branch: Branch!
+  tasks: [NotificationTask!]
+  account: Account
+}
+
+input UserLoginInput {
+  email: String!
+  password: String!
+}
+
+input UserSignupInput {
+  email: String!
+  password: String!
+  name: String!
+  role: String!
+}
+
