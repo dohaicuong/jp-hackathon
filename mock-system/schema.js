@@ -88,7 +88,7 @@ module.exports = gql`
     userIds: [ID!]
   }
   type TaskCreatePayload {
-    task: NotificationTask
+    task: NotificationQuestion
   }
 
   input ReportSendInput {

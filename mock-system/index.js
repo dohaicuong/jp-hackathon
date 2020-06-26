@@ -1,11 +1,12 @@
 const express = require('express')
 const { ApolloServer } = require('apollo-server-express')
+const mocks = require('./mocks')
 
 const app = express()
 
 const server = new ApolloServer({
   typeDefs: require('./schema'),
-  mocks: true,
+  mocks,
 })
 
 app.get('/graphql/server-health', (req, res) => {
