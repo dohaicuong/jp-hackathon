@@ -4,6 +4,6 @@ WORKDIR /app
 
 RUN yarn global add serve
 
-COPY ./build .
+COPY ./build /app/build
 
-ENTRYPOINT serve -p 3000 build
+ENTRYPOINT serve -p 3000 /app/build
