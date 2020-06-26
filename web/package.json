@@ -12,6 +12,9 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
+    "@types/react-relay": "^7.0.8",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/relay-runtime": "9.1.0",
     "notistack": "^0.9.17",
     "react": "^0.0.0-experimental-7f28234f8",
     "react-dom": "^0.0.0-experimental-7f28234f8",
@@ -47,9 +50,6 @@
     ]
   },
   "devDependencies": {
-    "@types/react-relay": "^7.0.8",
-    "@types/react-router-dom": "^5.1.5",
-    "@types/relay-runtime": "9.1.0",
     "babel-plugin-macros": "^2.8.0",
     "babel-plugin-relay": "^9.1.0",
     "dotenv-cli": "^3.2.0",
