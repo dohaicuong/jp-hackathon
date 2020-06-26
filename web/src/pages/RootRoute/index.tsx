@@ -15,6 +15,7 @@ const RootRoute = () => {
     `,
     {}
   )
+  console.log(data)
 
   return <>RootRoute</>
 }
