@@ -70,7 +70,7 @@ module.exports = gql`
   input QuestionCreateInput {
     question: String!
     isMultiple: Boolean!
-    isOptionalReponse: Boolean!
+    isOptionalResponse: Boolean!
 
     options: [QuestionOptionInput!]
   }
@@ -88,7 +88,7 @@ module.exports = gql`
     userIds: [ID!]
   }
   type TaskCreatePayload {
-    task: NotificationTask
+    task: NotificationQuestion
   }
 
   input ReportSendInput {
@@ -137,23 +137,20 @@ module.exports = gql`
 
     branch: Branch!
     account: Account
-    userTask: UserTask
+    notification: Notification
   }
 
-  type UserTask implements Node {
+  type Notification implements Node {
     id: ID!
     version: Int!
-    
-    user: User
-    tasks: [NotificationTask!]
+    notificationQuestion: [NotificationQuestion!]
   }
 
-  type NotificationTask implements Node {
+  type NotificationQuestion implements Node {
     id: ID!
-    questions: [Question!]
-
-    userTasks: [UserTask!]
-    frequencies: [Frequency!]
+    notification: Notification!
+    frequency: Frequency!
+    question: Question!
   }
 
   type Question implements Node {
@@ -163,7 +160,9 @@ module.exports = gql`
     options: [QuestionOption!]
 
     isMultiple: Boolean!
-    isOptionalReponse: Boolean!
+    isOptionalResponse: Boolean!
+
+    notificationQuestion: [NotificationQuestion!]
   }
   type QuestionOption implements Node {
     id: ID!
