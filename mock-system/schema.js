@@ -70,7 +70,7 @@ module.exports = gql`
   input QuestionCreateInput {
     question: String!
     isMultiple: Boolean!
-    isOptionalReponse: Boolean!
+    isOptionalResponse: Boolean!
 
     options: [QuestionOptionInput!]
   }
@@ -160,7 +160,7 @@ module.exports = gql`
     options: [QuestionOption!]
 
     isMultiple: Boolean!
-    isOptionalReponse: Boolean!
+    isOptionalResponse: Boolean!
 
     notificationQuestion: [NotificationQuestion!]
   }
