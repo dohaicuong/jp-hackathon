@@ -38,21 +38,10 @@ namespace EmployeeCentre {
         private async void workerThreadMain(object state) {
             GraphQLHttpClient graphQLClient = new GraphQLHttpClient("http://hackathon-lb-69098931.ap-southeast-2.elb.amazonaws.com/graphql", new NewtonsoftJsonSerializer());
             GraphQLRequest request = new GraphQLRequest {
-                Query = @" {
-                    tasks {
-                        id
-                        questions {
-                            question
-                        }
-                        users {
-                            name
-                            role
-                        }
-                    }   
-                }"
+                Query = QueryTemplates.getAll
             };
-
-            var response = await graphQLClient.SendQueryAsync<ResponseType>(request);
+            var response = await graphQLClient.SendQueryAsync<QueryResponseMe>(request);
+            UserModel user = response.Data.Me;
             CancellationToken token = (CancellationToken)state;
             Timer timer = new Timer(timerCallback, null, 0, 5000);
             while (true) {

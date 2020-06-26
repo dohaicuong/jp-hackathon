@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Text;
 
 namespace EmployeeCentre {
-    class NotificationModel {
+    class DataModel {
         public string TextBody {
             get {
                 return "This is the string from the model";

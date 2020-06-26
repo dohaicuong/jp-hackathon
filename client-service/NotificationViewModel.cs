@@ -9,7 +9,7 @@ using System.Windows.Input;
 namespace EmployeeCentre {
     class NotificationViewModel : INotifyPropertyChanged {
 
-        private NotificationModel notificationModel = new NotificationModel();
+        private DataModel notificationModel = new DataModel();
 
         public CheckBoxModel CheckBoxModel {
             get {
