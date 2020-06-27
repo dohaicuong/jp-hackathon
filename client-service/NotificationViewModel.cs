@@ -83,7 +83,7 @@ namespace EmployeeCentre {
         public string Image {
             get {
                 // return _options.Logo ?? NullImage;
-                return "images/Asleep.ico";
+                return "images/Asleep.ico" ?? NullImage;
             }
         }
 

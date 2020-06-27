@@ -35,7 +35,7 @@ namespace EmployeeCentre {
             }
         }";
 
-        public static string getUserTaskVersion = @"{
+        public static string getVersion = @"{
             me {
                 notification {
                     version
