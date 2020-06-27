@@ -1,6 +1,7 @@
-import graphene, random, hashlib, jwt
+import graphene, jwt
 import models as models
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
+from graphql import GraphQLError
 
 
 ##########################
@@ -93,6 +94,7 @@ class UserLoginInput(graphene.InputObjectType):
     email = graphene.String(required=True)
     password = graphene.String(required=True)
 
+
 ############
 # Payloads #
 ############
@@ -153,7 +155,7 @@ class DivisionAdd(graphene.Mutation):
             info, input.organisation_id
         )
 
-        if organisation is not None:   
+        if organisation is not None:
             division = models.Division(name=input.name, organisation=organisation)
 
             models.db.session.add(division)
@@ -210,13 +212,32 @@ class EmployeesAdd(graphene.Mutation):
         if branch is not None:
             users = []
             for employee in input.employees:
-                user = models.User(name=employee.name, role=employee.role, branch=branch)
+                user = models.User(
+                    name=employee.name, role=employee.role, branch=branch
+                )
                 users.append(user)
 
                 models.db.session.add(user)
                 models.db.session.commit()
 
             return EmployeesAddPayload(employees=users)
+
+
+def generate_token(email, password):
+    import random, hashlib
+
+    s = email + password + str(random.random())
+    return hashlib.sha256(s.encode()).hexdigest()
+
+
+def encode(password):
+    secret = "bi mat khong cho ai biet"
+    return jwt.encode({"some": password}, secret, algorithm="HS256")
+
+
+def decode(password):
+    secret = "bi mat khong cho ai biet"
+    return jwt.decode(password, secret, algorithms=["HS256"])["some"]
 
 
 class Signup(graphene.Mutation):
@@ -227,16 +248,18 @@ class Signup(graphene.Mutation):
 
     def mutate(self, info, input):
         account = models.Account.query.filter_by(email=input.email).first()
-        if account is None:
-            password = jwt.encode({'password': input.password}, 'bi mat khong cho ai biet', algorithm='HS256')      
-            i = input.password + input.email + str(random.random())
-            token=hashlib.sha256(i.encode()).hexdigest()
-            account = models.Account(email=input.email, password=password, token=token)
+        if account is not None:
+            raise GraphQLError("Email already existed")
 
-            models.db.session.add(account)
-            models.db.session.commit()
+        token = generate_token(input.email, input.password)
+        account = models.Account(
+            email=input.email, password=encode(input.password), token=token
+        )
 
-            return AuthPayload(token=token)
+        models.db.session.add(account)
+        models.db.session.commit()
+
+        return AuthPayload(token=token)
 
 
 class Login(graphene.Mutation):
@@ -247,10 +270,13 @@ class Login(graphene.Mutation):
 
     def mutate(self, info, input):
         account = models.Account.query.filter_by(email=input.email).first()
-        if account is not None:
-            password = jwt.decode(account.password, 'bi mat khong cho ai biet', algorithms=['HS256'])['password']
-            if password == input.password:
-                return AuthPayload(token=account.token)
+        if account is None:
+            raise GraphQLError("Email not exists")
+
+        if decode(account.password) != input.password:
+            raise GraphQLError("Incorrect password")
+
+        return AuthPayload(token=account.token)
 
 
 class Mutation(graphene.ObjectType):

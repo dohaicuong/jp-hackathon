@@ -146,7 +146,8 @@ module.exports = gql`
     id: ID!
     email: String!
     password: String!
-    user: User!
+    token: String!
+    # user: User!
   }
 
   type Organisation implements Node {
