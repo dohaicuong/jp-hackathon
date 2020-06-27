@@ -1,15 +1,22 @@
 import React from 'react'
-import TextField, { TextFieldProps } from '@material-ui/core/TextField'
+
+import MuiTextField, {
+  TextFieldProps as MuiTextFieldProps,
+} from '@material-ui/core/TextField'
 import { useFormContext } from 'react-hook-form'
 
-type FormTextFieldProps = TextFieldProps & {
-  
-}
-const FormTextField: React.FC<FormTextFieldProps> = props => {
-  const { register } = useFormContext()
+type TextFieldProps = Omit<MuiTextFieldProps, 'inputRef'>
+const TextField: React.FC<TextFieldProps> = props => {
+  const { register, formState } = useFormContext()
+  const { isSubmitting } = formState
 
   return (
-    <TextField {...props} inputRef={register} />
+    <MuiTextField
+      {...props}
+      variant={props.variant as any}
+      inputRef={register}
+      disabled={isSubmitting || props.disabled}
+    />
   )
 }
-export default FormTextField
+export default TextField

@@ -9,19 +9,46 @@ const routes: AppRouteProps[] = [
       import(/* webpackChunkName: "RootRoute" */ 'pages/RootRoute')
     ),
   },
+  
   {
-    exact: true,
-    path: '/user/signup',
+    exact: false,
+    path: '/user/auth',
     component: lazy(() =>
-      import(/* webpackChunkName: "SignupPage" */ 'pages/Signup')
+      import(/* webpackChunkName: "AuthRoutes" */ 'pages/Auth')
     ),
   },
+
+  {
+    exact: false,
+    path: '/org-create/:orgId/:divisionId/:branchId',
+    component: lazy(() => import(/* webpackChunkName: "EmployeeAdd" */ 'pages/OrgCreate/EmployeeAdd'))
+  },
+  {
+    exact: false,
+    path: '/org-create/:orgId/:divisionId',
+    component: lazy(() => import(/* webpackChunkName: "BranchCreate" */ 'pages/OrgCreate/BranchCreate'))
+  },
+  {
+    exact: false,
+    path: '/org-create/:orgId',
+    component: lazy(() => import(/* webpackChunkName: "DivisionCreate" */ 'pages/OrgCreate/DivisionCreate'))
+  },
+  {
+    exact: false,
+    path: '/org-create',
+    component: lazy(() => import(/* webpackChunkName: "OrgCreate" */ 'pages/OrgCreate'))
+  },
+
+  {
+    exact: false,
+    path: '/dashboard',
+    component: lazy(() => import(/* webpackChunkName: "Dashboard" */ 'pages/Dashboard'))
+  },
+
   {
     exact: true,
-    path: '/user/login',
-    component: lazy(() =>
-      import(/* webpackChunkName: "LoginPage" */ 'pages/Login')
-    ),
+    path: '*',
+    component: lazy(() => import(/* webpackChunkName: "NotFound" */ 'pages/NotFound'))
   },
 ]
 export default routes
