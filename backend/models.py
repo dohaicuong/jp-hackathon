@@ -48,6 +48,16 @@ class User(db.Model):
         return "<Employee %r, %r>" % (self.name, self.role)
 
 
+class Account(db.Model):
+    __tablename__ = "accounts"
+    uuid = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(256), index=True)
+    password = db.Column(db.String(256), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.uuid"))
+    def __repr__(self):
+        return "<Account %r>" % (self.email)
+
+
 def bootstrap_db():
     org = Organisation(name="FlyHR")
     div = Division(name="Tech", organisation=org)

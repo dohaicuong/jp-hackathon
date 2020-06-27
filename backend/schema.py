@@ -32,12 +32,19 @@ class User(SQLAlchemyObjectType):
         interfaces = (graphene.relay.Node,)
 
 
+class Account(SQLAlchemyObjectType):
+    class Meta:
+        model = models.Account
+        interfaces = (graphene.relay.Node,)
+
+
 class Query(graphene.ObjectType):
     node = graphene.relay.Node.Field()
     all_organizations = SQLAlchemyConnectionField(Organisation)
     all_divisions = SQLAlchemyConnectionField(Division)
     all_branches = SQLAlchemyConnectionField(Branch)
     all_users = SQLAlchemyConnectionField(User)
+    all_account = SQLAlchemyConnectionField(Account)
     branch = graphene.Node.Field(Branch)
     user = graphene.Node.Field(User)
 
@@ -75,7 +82,14 @@ class EmployeeEntryInput(graphene.InputObjectType):
 class EmployeesAddInput(graphene.InputObjectType):
     branch_id = graphene.ID(required=True)
     employees = graphene.List(EmployeeEntryInput)
-    
+
+
+class UserSignupInput(graphene.InputObjectType):
+    email = graphene.String(required=True)
+    password = graphene.String(required=True)
+    name = graphene.String(required=True)
+    role = graphene.String(required=True)
+
 
 ############
 # Payloads #
@@ -100,6 +114,11 @@ class EmployeeAddPayload(graphene.ObjectType):
 
 class EmployeesAddPayload(graphene.ObjectType):
     employees = graphene.List(lambda: User)
+
+
+class AuthPayload(graphene.ObjectType):
+    token = graphene.String(required=True)
+    user = graphene.Field(lambda: User)
 
 
 ############
@@ -139,7 +158,7 @@ class DivisionAdd(graphene.Mutation):
             models.db.session.add(division)
             models.db.session.commit()
 
-            return DivisionAddPayload(divisions=division)
+            return DivisionAddPayload(division=division)
 
 
 class BranchAdd(graphene.Mutation):
@@ -198,6 +217,17 @@ class EmployeesAdd(graphene.Mutation):
 
             return EmployeesAddPayload(employees=users)
 
+
+class Signup(graphene.Mutation):
+    class Arguments:
+        input = UserSignupInput(required=True)
+
+    Output = AuthPayload
+
+    def mutate(self, info, input):
+        token=None
+        user=None
+        return AuthPayload(token=token, user=user)
 
 class Mutation(graphene.ObjectType):
     organisation_add = OrganisationAdd.Field()
