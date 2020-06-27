@@ -2,7 +2,7 @@ import React from 'react'
 
 import { AppContext } from 'providers/AppContext'
 
-import { BrowserRouter as Router } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom'
 
 import { RelayEnvironmentProvider } from 'react-relay/hooks'
 import createEnvironment from 'providers/Relay/createEnvironment'
