@@ -17,8 +17,8 @@ module.exports = gql`
   # MUTATION
 
   type Mutation {
-    signup(input: UserSignupInput!): AuthPayload
-    login(input: UserLoginInput!): AuthPayload
+    signup(input: UserSignupInput!): AuthPayload # done
+    login(input: UserLoginInput!): AuthPayload # done
 
     #organisationCreate(input: OrgCreateInput!): OrgCreatePayload
     
@@ -38,8 +38,8 @@ module.exports = gql`
   input UserSignupInput {
     email: String!
     password: String!
-    name: String!
-    role: String!
+    #name: String!
+    #role: String!
   }
 
   input UserLoginInput {

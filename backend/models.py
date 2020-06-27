@@ -8,7 +8,7 @@ db = SQLAlchemy(app)
 class Organisation(db.Model):
     __tablename__ = "organisations"
     uuid = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(256), index=True, unique=True)
+    name = db.Column(db.String(256), index=True)
     divisions = db.relationship("Division", backref="organisation")
 
     def __repr__(self):
@@ -29,7 +29,7 @@ class Division(db.Model):
 class Branch(db.Model):
     __tablename__ = "branches"
     uuid = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(256), index=True, unique=True)
+    name = db.Column(db.String(256), index=True)
     employees = db.relationship("User", backref="branch")
     division_id = db.Column(db.Integer, db.ForeignKey("divisions.uuid"))
 
@@ -51,9 +51,11 @@ class User(db.Model):
 class Account(db.Model):
     __tablename__ = "accounts"
     uuid = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(256), index=True)
+    email = db.Column(db.String(256), index=True, unique=True)
     password = db.Column(db.String(256), index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.uuid"))
+    token = db.Column(db.String(256), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.uuid"), nullable=True)
+
     def __repr__(self):
         return "<Account %r>" % (self.email)
 

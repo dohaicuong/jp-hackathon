@@ -1,4 +1,4 @@
-import graphene
+import graphene, random, hashlib, jwt
 import models as models
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 
@@ -44,7 +44,7 @@ class Query(graphene.ObjectType):
     all_divisions = SQLAlchemyConnectionField(Division)
     all_branches = SQLAlchemyConnectionField(Branch)
     all_users = SQLAlchemyConnectionField(User)
-    all_account = SQLAlchemyConnectionField(Account)
+    all_accounts = SQLAlchemyConnectionField(Account)
     branch = graphene.Node.Field(Branch)
     user = graphene.Node.Field(User)
 
@@ -87,9 +87,11 @@ class EmployeesAddInput(graphene.InputObjectType):
 class UserSignupInput(graphene.InputObjectType):
     email = graphene.String(required=True)
     password = graphene.String(required=True)
-    name = graphene.String(required=True)
-    role = graphene.String(required=True)
 
+
+class UserLoginInput(graphene.InputObjectType):
+    email = graphene.String(required=True)
+    password = graphene.String(required=True)
 
 ############
 # Payloads #
@@ -118,7 +120,6 @@ class EmployeesAddPayload(graphene.ObjectType):
 
 class AuthPayload(graphene.ObjectType):
     token = graphene.String(required=True)
-    user = graphene.Field(lambda: User)
 
 
 ############
@@ -225,9 +226,32 @@ class Signup(graphene.Mutation):
     Output = AuthPayload
 
     def mutate(self, info, input):
-        token=None
-        user=None
-        return AuthPayload(token=token, user=user)
+        account = models.Account.query.filter_by(email=input.email).first()
+        if account is None:
+            password = jwt.encode({'password': input.password}, 'bi mat khong cho ai biet', algorithm='HS256')      
+            i = input.password + input.email + str(random.random())
+            token=hashlib.sha256(i.encode()).hexdigest()
+            account = models.Account(email=input.email, password=password, token=token)
+
+            models.db.session.add(account)
+            models.db.session.commit()
+
+            return AuthPayload(token=token)
+
+
+class Login(graphene.Mutation):
+    class Arguments:
+        input = UserLoginInput(required=True)
+
+    Output = AuthPayload
+
+    def mutate(self, info, input):
+        account = models.Account.query.filter_by(email=input.email).first()
+        if account is not None:
+            password = jwt.decode(account.password, 'bi mat khong cho ai biet', algorithms=['HS256'])['password']
+            if password == input.password:
+                return AuthPayload(token=account.token)
+
 
 class Mutation(graphene.ObjectType):
     organisation_add = OrganisationAdd.Field()
@@ -235,6 +259,8 @@ class Mutation(graphene.ObjectType):
     branch_add = BranchAdd.Field()
     employee_add = EmployeeAdd.Field()
     employees_add = EmployeesAdd.Field()
+    signup = Signup.Field()
+    login = Login.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
