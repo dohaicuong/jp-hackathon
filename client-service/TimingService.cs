@@ -14,23 +14,29 @@ using System.Reactive;
 namespace EmployeeCentre {
     class TimingService : IHostedService, IDisposable {
         private Task _executingTask;
-        private List<SchedulingJobDetails> _timingJobs;
+        private List<SchedulingJobDetails> _schedulingJobs;
         private int _currentVersion; 
 
         protected TimingService(NotificationModel model) {
             _currentVersion = model.Version;
+            _schedulingJobs = new List<SchedulingJobDetails>();
             foreach (NotificationQuestionModel question in model.NotificationQuestion) {
-                _timingJobs.Add(new SchedulingJobDetails {
+                _schedulingJobs.Add(new SchedulingJobDetails {
                     question = question,
                     cronExpression = CronExpression.Parse(question.Frequency)
                 });
             }
         }
 
+        public TimingService() {
+            _currentVersion = 0;
+            _schedulingJobs = new List<SchedulingJobDetails>();
+        }
+
         #nullable enable
         private void _RegisterNotificationModel(NotificationModel model) {
             _currentVersion = model.Version;
-            foreach (SchedulingJobDetails oldQuestion in _timingJobs) {
+            foreach (SchedulingJobDetails oldQuestion in _schedulingJobs) {
                 bool idFound = false;
                 foreach (NotificationQuestionModel newQuestion in model.NotificationQuestion) {
                     // If ID found, break no further action required.
@@ -43,10 +49,10 @@ namespace EmployeeCentre {
 
                 // Find and remove old job that is not in the new version.
                 if (!idFound) {
-                    for (int i = 0; i < _timingJobs.Count; i++) {
-                        if (_timingJobs[i].ID == oldQuestion.ID) {
-                            _timingJobs.RemoveAt(i);
-                            i = _timingJobs.Count;
+                    for (int i = 0; i < _schedulingJobs.Count; i++) {
+                        if (_schedulingJobs[i].ID == oldQuestion.ID) {
+                            _schedulingJobs.RemoveAt(i);
+                            i = _schedulingJobs.Count;
                         }
                     }
                 }
@@ -54,7 +60,7 @@ namespace EmployeeCentre {
 
             foreach (NotificationQuestionModel newQuestion in model.NotificationQuestion) {
                 bool idFound = false;
-                foreach (SchedulingJobDetails oldQuestion in _timingJobs) {
+                foreach (SchedulingJobDetails oldQuestion in _schedulingJobs) {
                     // If ID found, break no further action required.
                     if (newQuestion.ID == oldQuestion.ID) {
                         idFound = true;
@@ -63,11 +69,12 @@ namespace EmployeeCentre {
                 }
                 // Add new unique question to job list. 
                 if (!idFound) {
-                    _timingJobs.Add(new SchedulingJobDetails {
+                    _schedulingJobs.Add(new SchedulingJobDetails {
                         question = newQuestion,
-                        cronExpression = CronExpression.Parse(newQuestion.Frequency)
+                        cronExpression = CronExpression.Parse("25 19 * * *")
                     });
                 }
+                var val = _schedulingJobs.Count;
             }
         }
 
@@ -114,14 +121,14 @@ namespace EmployeeCentre {
                     _RegisterNotificationModel(model);
                 } catch (WebException e) {
                     // Assume that there are no questions if questions cannot be retrieved on known update. 
-                    _timingJobs.Clear();
+                    _schedulingJobs.Clear();
                 }
             }
         }
 
         private async Task<bool> _JobShouldInvoke(SchedulingJobDetails job) {
             await _ManageUpdates();
-            foreach (SchedulingJobDetails activeJob in _timingJobs) {
+            foreach (SchedulingJobDetails activeJob in _schedulingJobs) {
                 if (activeJob.ID == job.ID) return true;
             }
             return false;
@@ -132,10 +139,16 @@ namespace EmployeeCentre {
             do {
                 TimeSpan minimumTime = TimeSpan.MaxValue;
                 SchedulingJobDetails? jobToRun = null;
-                foreach (SchedulingJobDetails job in _timingJobs) {
-                    var nextOccurence = job.cronExpression.GetNextOccurrence(DateTime.Now);
-                    if (nextOccurence != null) {
-                        var timeUntilNextOccurrence = (nextOccurence - DateTime.Now).Value;
+                foreach (SchedulingJobDetails job in _schedulingJobs) {
+                    DateTimeOffset? nextOccurrence = null;
+                    try {
+                        nextOccurrence = job.cronExpression.GetNextOccurrence(DateTimeOffset.Now, TimeZoneInfo.Local);
+                    } catch (Exception e) {
+                        Console.WriteLine(e.StackTrace);
+                    }
+
+                    if (nextOccurrence != null) {
+                        var timeUntilNextOccurrence = (nextOccurrence - DateTime.Now).Value;
                         if (timeUntilNextOccurrence < minimumTime) {
                             minimumTime = timeUntilNextOccurrence;
                             jobToRun = job;

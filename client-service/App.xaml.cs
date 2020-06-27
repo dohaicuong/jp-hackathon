@@ -23,16 +23,19 @@ namespace EmployeeCentre {
     /// </summary>
     public partial class App : Application {
 
-        private TaskbarIcon notifyIcon;
+        private TaskbarIcon _notifyIcon;
+        private TimingService _timingService;
 
-        protected override void OnStartup(StartupEventArgs e) {
+        protected override async void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);
 
             var icon = FindResource("notifyIcon");
-            notifyIcon = (TaskbarIcon)FindResource("notifyIcon");
+            _notifyIcon = (TaskbarIcon)FindResource("notifyIcon");
 
             CancellationTokenSource cts = new CancellationTokenSource();
-            ThreadPool.QueueUserWorkItem(workerThreadMain, cts.Token);
+            _timingService = new TimingService();
+            await _timingService.StartAsync(cts.Token);
+            //ThreadPool.QueueUserWorkItem(workerThreadMain, cts.Token);
         }
 
         private async void workerThreadMain(object state) {
