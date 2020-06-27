@@ -1,5 +1,6 @@
-import graphene, jwt
+import graphene
 import models as models
+from utils import encode, decode, generate_token
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 from graphql import GraphQLError
 
@@ -46,8 +47,11 @@ class Query(graphene.ObjectType):
     all_branches = SQLAlchemyConnectionField(Branch)
     all_users = SQLAlchemyConnectionField(User)
     all_accounts = SQLAlchemyConnectionField(Account)
+    organisation = graphene.Node.Field(Organisation)
+    division = graphene.Node.Field(Division)
     branch = graphene.Node.Field(Branch)
     user = graphene.Node.Field(User)
+    acount = graphene.Node.Field(Account)
 
 
 ##########
@@ -223,21 +227,6 @@ class EmployeesAdd(graphene.Mutation):
             return EmployeesAddPayload(employees=users)
 
 
-def generate_token(email, password):
-    import random, hashlib
-
-    s = email + password + str(random.random())
-    return hashlib.sha256(s.encode()).hexdigest()
-
-
-def encode(password):
-    secret = "bi mat khong cho ai biet"
-    return jwt.encode({"some": password}, secret, algorithm="HS256")
-
-
-def decode(password):
-    secret = "bi mat khong cho ai biet"
-    return jwt.decode(password, secret, algorithms=["HS256"])["some"]
 
 
 class Signup(graphene.Mutation):
