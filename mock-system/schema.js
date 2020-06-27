@@ -20,9 +20,13 @@ module.exports = gql`
     signup(input: UserSignupInput!): AuthPayload
     login(input: UserLoginInput!): AuthPayload
 
-    organisationCreate(input: OrgCreateInput!): OrgCreatePayload
+    #organisationCreate(input: OrgCreateInput!): OrgCreatePayload
     
-    employeeAdd(input: EmployeeAddInput!): EmployeeAddPayload
+    organisationAdd(input: OrganisationAddInput!): OrganisationAddPayload # done
+    divisionAdd(input: DivisionAddInput!): DivisionAddPayload # done
+    branchAdd(input: BranchAddInput!): BranchAddPayload # done
+    employeeAdd(input: EmployeeAddInput!): EmployeeAddPayload # done
+    employeesAdd(input: EmployeesAddInput!): EmployeesAddPayload # done
 
     questionCreate(input: QuestionCreateInput!): QuestionCreatePayload
 
@@ -48,13 +52,38 @@ module.exports = gql`
     user: User!
   }
 
-  input OrgCreateInput {
-    orgName: String!
-    divisionNames: [String!]
-    brancheNames: [String!]
+  # input OrgCreateInput {
+  #   orgName: String!
+  #   divisionNames: [String!]
+  #   brancheNames: [String!]
+  # }
+  # type OrgCreatePayload {
+  #   organisation: Organisation
+  # }
+
+  input OrganisationAddInput {
+    name: String!
   }
-  type OrgCreatePayload {
+  type OrganizationAddPayload {
     organisation: Organisation
+  }
+
+  input DivisionAddInput {
+    organisationId: ID!
+
+    name: String!
+  }
+  type DivisionAddPayload {
+    division: Division
+  }
+
+  input BranchAddInput {
+    divisionId: ID!
+
+    name: String!
+  }
+  type BranchAddPayload {
+    branch: Branch
   }
 
   input EmployeeAddInput {
@@ -65,6 +94,19 @@ module.exports = gql`
   }
   type EmployeeAddPayload {
     employee: User
+  }
+
+  input EmployeeEntryInput {
+    name: String!
+    role: String!
+  }
+  input EmployeesAddInput {
+    branchId: ID!
+
+    employees: [EmployeeEntryInput!]
+  }
+  type EmployeesAddPayload {
+    employees: [User]
   }
 
   input QuestionCreateInput {
