@@ -12,9 +12,6 @@ export type LoginMutationVariables = {
 export type LoginMutationResponse = {
     readonly login: {
         readonly token: string;
-        readonly user: {
-            readonly name: string;
-        };
     } | null;
 };
 export type LoginMutation = {
@@ -30,10 +27,6 @@ mutation LoginMutation(
 ) {
   login(input: $input) {
     token
-    user {
-      name
-      id
-    }
   }
 }
 */
@@ -49,57 +42,37 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "input",
+        "variableName": "input"
+      }
+    ],
+    "concreteType": "AuthPayload",
+    "kind": "LinkedField",
+    "name": "login",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "token",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "token",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "LoginMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "AuthPayload",
-        "kind": "LinkedField",
-        "name": "login",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v3/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "Mutation"
   },
   "kind": "Request",
@@ -107,48 +80,16 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "LoginMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "AuthPayload",
-        "kind": "LinkedField",
-        "name": "login",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v3/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
     "id": null,
     "metadata": {},
     "name": "LoginMutation",
     "operationKind": "mutation",
-    "text": "mutation LoginMutation(\n  $input: UserLoginInput!\n) {\n  login(input: $input) {\n    token\n    user {\n      name\n      id\n    }\n  }\n}\n"
+    "text": "mutation LoginMutation(\n  $input: UserLoginInput!\n) {\n  login(input: $input) {\n    token\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '3181a560af80a6fd7b1c1e4ac5a17783';
+(node as any).hash = '4ac6afa4dd422ca4db21605543da1786';
 export default node;

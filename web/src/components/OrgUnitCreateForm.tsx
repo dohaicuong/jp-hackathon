@@ -42,6 +42,7 @@ const OrgUnitCreateForm: React.FC<OrgUnitCreateFormProps> = ({
               </Grid>
               <Grid item xs={2} className={classes.buttonWrapper}>
                 <Button
+                  type='submit'
                   startIcon={<SendIcon />}
                   classes={{ startIcon: classes.buttonIcon }}
                   size='large'

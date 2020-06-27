@@ -1,44 +1,107 @@
-directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
-
-"""Exposes a URL that specifies the behaviour of this scalar."""
-directive @specifiedBy(
-  """The URL that specifies the behaviour of this scalar."""
-  url: String!
-) on SCALAR
-
 type Account implements Node {
+  uuid: ID!
+  email: String
+  password: String
+  token: String
+  userId: Int
+
+  """The ID of the object."""
   id: ID!
-  email: String!
-  password: String!
-  user: User!
 }
 
-scalar Answer
+type AccountConnection {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [AccountEdge]!
+}
+
+"""A Relay edge containing a `Account` and its cursor."""
+type AccountEdge {
+  """The item at the end of the edge"""
+  node: Account
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
 
 type AuthPayload {
   token: String!
-  user: User!
 }
 
 type Branch implements Node {
+  uuid: ID!
+  name: String
+  divisionId: Int
+  employees(before: String, after: String, first: Int, last: Int): UserConnection
+  division: Division
+
+  """The ID of the object."""
   id: ID!
+}
+
+input BranchAddInput {
+  divisionId: ID!
   name: String!
-  division: Division!
-  employees: [User!]
 }
 
-enum CacheControlScope {
-  PUBLIC
-  PRIVATE
+type BranchAddPayload {
+  branch: Branch
 }
 
-scalar DateTime
+type BranchConnection {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [BranchEdge]!
+}
+
+"""A Relay edge containing a `Branch` and its cursor."""
+type BranchEdge {
+  """The item at the end of the edge"""
+  node: Branch
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
 
 type Division implements Node {
+  uuid: ID!
+  name: String
+  organisationId: Int
+  branches(before: String, after: String, first: Int, last: Int): BranchConnection
+  organisation: Organisation
+
+  """The ID of the object."""
   id: ID!
+}
+
+input DivisionAddInput {
+  organisationId: ID!
   name: String!
-  organisation: Organisation!
-  branches: [Branch!]
+}
+
+type DivisionAddPayload {
+  division: Division
+}
+
+type DivisionConnection {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [DivisionEdge]!
+}
+
+"""A Relay edge containing a `Division` and its cursor."""
+type DivisionEdge {
+  """The item at the end of the edge"""
+  node: Division
+
+  """A cursor for use in pagination"""
+  cursor: String!
 }
 
 input EmployeeAddInput {
@@ -51,116 +114,129 @@ type EmployeeAddPayload {
   employee: User
 }
 
-scalar Frequency
+input EmployeeEntryInput {
+  name: String!
+  role: String!
+}
+
+input EmployeesAddInput {
+  branchId: ID!
+  employees: [EmployeeEntryInput]
+}
+
+type EmployeesAddPayload {
+  employees: [User]
+}
 
 type Mutation {
+  organisationAdd(input: OrganisationAddInput!): OrganisationAddPayload
+  divisionAdd(input: DivisionAddInput!): DivisionAddPayload
+  branchAdd(input: BranchAddInput!): BranchAddPayload
+  employeeAdd(input: EmployeeAddInput!): EmployeeAddPayload
+  employeesAdd(input: EmployeesAddInput!): EmployeesAddPayload
   signup(input: UserSignupInput!): AuthPayload
   login(input: UserLoginInput!): AuthPayload
-  organisationCreate(input: OrgCreateInput!): OrgCreatePayload
-  employeeAdd(input: EmployeeAddInput!): EmployeeAddPayload
-  questionCreate(input: QuestionCreateInput!): QuestionCreatePayload
-  taskCreate(input: TaskCreateInput!): TaskCreatePayload
-  reportSend(input: ReportSendInput!): ReportSendPayload
 }
 
+"""An object with an ID"""
 interface Node {
+  """The ID of the object."""
   id: ID!
-}
-
-type NotificationTask implements Node {
-  id: ID!
-  questions: [Question!]
-  users: [User!]
-  frequencies: [Frequency!]
 }
 
 type Organisation implements Node {
+  uuid: ID!
+  name: String
+  divisions(before: String, after: String, first: Int, last: Int): DivisionConnection
+
+  """The ID of the object."""
   id: ID!
+}
+
+input OrganisationAddInput {
   name: String!
-  divisions: [Division!]
 }
 
-input OrgCreateInput {
-  orgName: String!
-  divisionNames: [String!]
-  brancheNames: [String!]
-}
-
-type OrgCreatePayload {
+type OrganisationAddPayload {
   organisation: Organisation
 }
 
+type OrganisationConnection {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [OrganisationEdge]!
+}
+
+"""A Relay edge containing a `Organisation` and its cursor."""
+type OrganisationEdge {
+  """The item at the end of the edge"""
+  node: Organisation
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+"""
+The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
+"""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
 type Query {
-  me: User!
+  """The ID of the object"""
   node(id: ID!): Node
-}
+  allOrganizations(before: String, after: String, first: Int, last: Int): OrganisationConnection
+  allDivisions(before: String, after: String, first: Int, last: Int): DivisionConnection
+  allBranches(before: String, after: String, first: Int, last: Int): BranchConnection
+  allUsers(before: String, after: String, first: Int, last: Int): UserConnection
+  allAccounts(before: String, after: String, first: Int, last: Int): AccountConnection
 
-type Question implements Node {
-  id: ID!
-  question: String!
-  options: [QuestionOption!]
-  isMultiple: Boolean!
-  isOptionalReponse: Boolean!
-}
+  """The ID of the object"""
+  branch(id: ID!): Branch
 
-input QuestionCreateInput {
-  question: String!
-  isMultiple: Boolean!
-  isOptionalReponse: Boolean!
-  options: [QuestionOptionInput!]
+  """The ID of the object"""
+  user(id: ID!): User
 }
-
-type QuestionCreatePayload {
-  question: Question
-}
-
-type QuestionOption implements Node {
-  id: ID!
-  label: String
-  logo: String
-}
-
-input QuestionOptionInput {
-  label: String
-  logo: String
-}
-
-type Report implements Node {
-  id: ID!
-  question: Question!
-  user: User!
-  answer: Answer!
-  createdAt: DateTime!
-}
-
-input ReportSendInput {
-  questionId: ID!
-  answer: Answer
-}
-
-type ReportSendPayload {
-  report: Report
-}
-
-input TaskCreateInput {
-  frequencies: [Frequency!]
-  questionIds: [ID!]
-  userIds: [ID!]
-}
-
-type TaskCreatePayload {
-  task: NotificationTask
-}
-
-scalar Upload
 
 type User implements Node {
+  uuid: ID!
+  name: String
+  role: String
+  branchId: Int
+  branch: Branch
+
+  """The ID of the object."""
   id: ID!
-  name: String!
-  role: String!
-  branch: Branch!
-  tasks: [NotificationTask!]
-  account: Account
+}
+
+type UserConnection {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [UserEdge]!
+}
+
+"""A Relay edge containing a `User` and its cursor."""
+type UserEdge {
+  """The item at the end of the edge"""
+  node: User
+
+  """A cursor for use in pagination"""
+  cursor: String!
 }
 
 input UserLoginInput {
@@ -171,7 +247,5 @@ input UserLoginInput {
 input UserSignupInput {
   email: String!
   password: String!
-  name: String!
-  role: String!
 }
 

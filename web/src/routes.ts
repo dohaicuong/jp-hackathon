@@ -20,27 +20,32 @@ const routes: AppRouteProps[] = [
 
   {
     exact: false,
+    private: true,
     path: '/org-create/:orgId/:divisionId/:branchId',
     component: lazy(() => import(/* webpackChunkName: "EmployeeAdd" */ 'pages/OrgCreate/EmployeeAdd'))
   },
   {
     exact: false,
+    private: true,
     path: '/org-create/:orgId/:divisionId',
     component: lazy(() => import(/* webpackChunkName: "BranchCreate" */ 'pages/OrgCreate/BranchCreate'))
   },
   {
     exact: false,
+    private: true,
     path: '/org-create/:orgId',
     component: lazy(() => import(/* webpackChunkName: "DivisionCreate" */ 'pages/OrgCreate/DivisionCreate'))
   },
   {
     exact: false,
+    private: true,
     path: '/org-create',
     component: lazy(() => import(/* webpackChunkName: "OrgCreate" */ 'pages/OrgCreate'))
   },
 
   {
     exact: false,
+    private: true,
     path: '/dashboard',
     component: lazy(() => import(/* webpackChunkName: "Dashboard" */ 'pages/Dashboard'))
   },
