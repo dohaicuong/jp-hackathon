@@ -62,6 +62,7 @@ module.exports = gql`
   # }
 
   input OrganisationAddInput {
+    token: String!
     name: String!
   }
   type OrganizationAddPayload {
@@ -147,12 +148,14 @@ module.exports = gql`
     email: String!
     password: String!
     token: String!
+    organisation: Organisation!
     # user: User!
   }
 
   type Organisation implements Node {
     id: ID!
     name: String!
+    admin: Account!
 
     divisions: [Division!]
   }

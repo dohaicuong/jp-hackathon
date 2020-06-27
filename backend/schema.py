@@ -60,6 +60,7 @@ class Query(graphene.ObjectType):
 
 
 class OrganisationAddInput(graphene.InputObjectType):
+    token = graphene.String(required=True)
     name = graphene.String(required=True)
 
 
@@ -140,9 +141,22 @@ class OrganisationAdd(graphene.Mutation):
     Output = OrganisationAddPayload
 
     def mutate(self, info, input):
-        organisation = models.Organisation(name=input.name)
+        org = models.Organisation.query.filter_by(name=input.name).first()
+        if org is not None:
+            raise GraphQLError("The organisation already existed")
 
+        admin = models.Account.query.filter_by(token=input.token).first()
+        if admin is None:
+            raise GraphQLError("Invalid token")
+
+        if admin.organisation is not None:
+            raise GraphQLError("This admin has already assigned for another organisation")
+
+        organisation = models.Organisation(name=input.name)
         models.db.session.add(organisation)
+        models.db.session.commit()
+
+        admin.organisation = organisation
         models.db.session.commit()
 
         return OrganisationAddPayload(organisation=organisation)
@@ -155,17 +169,16 @@ class DivisionAdd(graphene.Mutation):
     Output = DivisionAddPayload
 
     def mutate(self, info, input):
-        organisation = graphene.Node.get_node_from_global_id(
-            info, input.organisation_id
-        )
+        organisation = graphene.Node.get_node_from_global_id(info, input.organisation_id)
+        if organisation is None:
+            raise GraphQLError("Invalid organisation ID")
 
-        if organisation is not None:
-            division = models.Division(name=input.name, organisation=organisation)
+        division = models.Division(name=input.name, organisation=organisation)
 
-            models.db.session.add(division)
-            models.db.session.commit()
+        models.db.session.add(division)
+        models.db.session.commit()
 
-            return DivisionAddPayload(division=division)
+        return DivisionAddPayload(division=division)
 
 
 class BranchAdd(graphene.Mutation):
@@ -176,14 +189,15 @@ class BranchAdd(graphene.Mutation):
 
     def mutate(self, info, input):
         division = graphene.Node.get_node_from_global_id(info, input.division_id)
+        if division is None:
+            raise GraphQLError("Invalid division ID")
 
-        if division is not None:
-            branch = models.Branch(name=input.name, division=division)
+        branch = models.Branch(name=input.name, division=division)
 
-            models.db.session.add(branch)
-            models.db.session.commit()
+        models.db.session.add(branch)
+        models.db.session.commit()
 
-            return BranchAddPayload(branch=branch)
+        return BranchAddPayload(branch=branch)
 
 
 class EmployeeAdd(graphene.Mutation):
@@ -194,14 +208,15 @@ class EmployeeAdd(graphene.Mutation):
 
     def mutate(self, info, input):
         branch = graphene.Node.get_node_from_global_id(info, input.branch_id)
-
         if branch is not None:
-            user = models.User(name=input.name, role=input.role, branch=branch)
+            raise GraphQLError("Invalid branch ID")
 
-            models.db.session.add(user)
-            models.db.session.commit()
+        user = models.User(name=input.name, role=input.role, branch=branch)
 
-            return EmployeeAddPayload(employee=user)
+        models.db.session.add(user)
+        models.db.session.commit()
+
+        return EmployeeAddPayload(employee=user)
 
 
 class EmployeesAdd(graphene.Mutation):
@@ -212,21 +227,20 @@ class EmployeesAdd(graphene.Mutation):
 
     def mutate(self, info, input):
         branch = graphene.Node.get_node_from_global_id(info, input.branch_id)
-
         if branch is not None:
-            users = []
-            for employee in input.employees:
-                user = models.User(
-                    name=employee.name, role=employee.role, branch=branch
-                )
-                users.append(user)
+            raise GraphQLError("Invalid branch ID")
 
-                models.db.session.add(user)
-                models.db.session.commit()
+        users = []
+        for employee in input.employees:
+            user = models.User(
+                name=employee.name, role=employee.role, branch=branch
+            )
+            users.append(user)
 
-            return EmployeesAddPayload(employees=users)
+            models.db.session.add(user)
+            models.db.session.commit()
 
-
+        return EmployeesAddPayload(employees=users)
 
 
 class Signup(graphene.Mutation):
@@ -241,9 +255,7 @@ class Signup(graphene.Mutation):
             raise GraphQLError("Email already existed")
 
         token = generate_token(input.email, input.password)
-        account = models.Account(
-            email=input.email, password=encode(input.password), token=token
-        )
+        account = models.Account(email=input.email, password=encode(input.password), token=token)
 
         models.db.session.add(account)
         models.db.session.commit()
