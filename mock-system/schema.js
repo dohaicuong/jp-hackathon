@@ -10,7 +10,7 @@ module.exports = gql`
   # QUERY
 
   type Query {
-    me: User!
+    me: Account!
     node(id: ID!): Node
   }
 

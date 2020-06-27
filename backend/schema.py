@@ -40,6 +40,18 @@ class Account(SQLAlchemyObjectType):
         interfaces = (graphene.relay.Node,)
 
 
+class Question(SQLAlchemyObjectType):
+    class Meta:
+        model = models.Question
+        interfaces = (graphene.relay.Node,)
+
+
+class QuestionOption(SQLAlchemyObjectType):
+    class Meta:
+        model = models.QuestionOption
+        interfaces = (graphene.relay.Node,)
+
+
 class Query(graphene.ObjectType):
     node = graphene.relay.Node.Field()
     all_organizations = SQLAlchemyConnectionField(Organisation)
@@ -47,11 +59,53 @@ class Query(graphene.ObjectType):
     all_branches = SQLAlchemyConnectionField(Branch)
     all_users = SQLAlchemyConnectionField(User)
     all_accounts = SQLAlchemyConnectionField(Account)
+    all_questions = SQLAlchemyConnectionField(Question)
+    all_question_options = SQLAlchemyConnectionField(QuestionOption)
+
+    organisations = graphene.List(Organisation)
+    divisions = graphene.List(Division)
+    branches = graphene.List(Branch)
+    users = graphene.List(User)
+    accounts = graphene.List(Account)
+    questions = graphene.List(Question)
+    question_optionss = graphene.List(QuestionOption)
+
     organisation = graphene.Node.Field(Organisation)
     division = graphene.Node.Field(Division)
     branch = graphene.Node.Field(Branch)
     user = graphene.Node.Field(User)
     acount = graphene.Node.Field(Account)
+    question = graphene.Node.Field(Question)
+    question_option = graphene.Node.Field(QuestionOption)
+
+    me = graphene.Field(Account) 
+
+    def resolve_organisations(self, info):
+        return models.Organisation.query.all()
+
+    def resolve_divisions(self, info):
+        return models.Division.query.all()    
+
+    def resolve_branches(self, info):
+        return models.Branch.query.all()
+
+    def resolve_users(self, info):
+        return models.User.query.all()
+
+    def resolve_accounts(self, info):
+        return models.Account.query.all()
+
+    def resolve_questions(self, info):
+        return models.Question.query.all()
+
+    def resolve_question_options(self, info):
+        return models.QuestionOption.query.all()
+
+    def resolve_me(self, info):
+        token = info.context.headers.get('Authorization').split(" ")[1]
+        account = models.Account.query.filter_by(token=token).first()
+        if account is not None:
+            return account
 
 
 ##########
@@ -60,7 +114,6 @@ class Query(graphene.ObjectType):
 
 
 class OrganisationAddInput(graphene.InputObjectType):
-    token = graphene.String(required=True)
     name = graphene.String(required=True)
 
 
@@ -100,6 +153,18 @@ class UserLoginInput(graphene.InputObjectType):
     password = graphene.String(required=True)
 
 
+class QuestionOptionInput(graphene.InputObjectType):
+    label = graphene.String(required=True)
+    logo = graphene.String(required=True)
+
+
+class QuestionCreateInput(graphene.InputObjectType):
+    question = graphene.String(required=True)
+    is_multiple = graphene.Boolean(required=True)
+    is_optional_response = graphene.Boolean(required=True)
+    options = graphene.List(QuestionOptionInput)
+
+
 ############
 # Payloads #
 ############
@@ -129,6 +194,10 @@ class AuthPayload(graphene.ObjectType):
     token = graphene.String(required=True)
 
 
+class QuestionCreatePayload(graphene.ObjectType):
+    question = graphene.Field(lambda: Question)
+
+
 ############
 # MUTATION #
 ############
@@ -145,7 +214,8 @@ class OrganisationAdd(graphene.Mutation):
         if org is not None:
             raise GraphQLError("The organisation already existed")
 
-        admin = models.Account.query.filter_by(token=input.token).first()
+        token = info.context.headers.get('Authorization').split(" ")[1]
+        admin = models.Account.query.filter_by(token=token).first()
         if admin is None:
             raise GraphQLError("Invalid token")
 
@@ -208,7 +278,7 @@ class EmployeeAdd(graphene.Mutation):
 
     def mutate(self, info, input):
         branch = graphene.Node.get_node_from_global_id(info, input.branch_id)
-        if branch is not None:
+        if branch is None:
             raise GraphQLError("Invalid branch ID")
 
         user = models.User(name=input.name, role=input.role, branch=branch)
@@ -227,7 +297,7 @@ class EmployeesAdd(graphene.Mutation):
 
     def mutate(self, info, input):
         branch = graphene.Node.get_node_from_global_id(info, input.branch_id)
-        if branch is not None:
+        if branch is None:
             raise GraphQLError("Invalid branch ID")
 
         users = []
@@ -280,6 +350,31 @@ class Login(graphene.Mutation):
         return AuthPayload(token=account.token)
 
 
+class QuestionCreate(graphene.Mutation):
+    class Arguments:
+        input = QuestionCreateInput(required=True)
+
+    Output = QuestionCreatePayload
+
+    def mutate(self, info, input):
+        question = models.Question(question=input.question, is_multiple=input.is_multiple, 
+            is_optional_response=input.is_optional_response)
+        
+        question_options = []
+        for option in input.options:
+            question_option = models.QuestionOption(label=option.label, logo=option.logo)
+            question_option.question=question
+            question_options.append(question_option)
+            models.db.session.add(question_option)
+
+        question.question_options = question_options
+
+        models.db.session.add(question)
+        models.db.session.commit()
+        
+        return QuestionCreatePayload(question=question)
+
+
 class Mutation(graphene.ObjectType):
     organisation_add = OrganisationAdd.Field()
     division_add = DivisionAdd.Field()
@@ -288,6 +383,7 @@ class Mutation(graphene.ObjectType):
     employees_add = EmployeesAdd.Field()
     signup = Signup.Field()
     login = Login.Field()
+    question_create = QuestionCreate.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
