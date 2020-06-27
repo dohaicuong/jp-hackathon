@@ -26,6 +26,7 @@ module.exports = gql`
     divisionAdd(input: DivisionAddInput!): DivisionAddPayload # done
     branchAdd(input: BranchAddInput!): BranchAddPayload # done
     employeeAdd(input: EmployeeAddInput!): EmployeeAddPayload # done
+    employeesAdd(input: EmployeesAddInput!): EmployeesAddPayload # done
 
     questionCreate(input: QuestionCreateInput!): QuestionCreatePayload
 
@@ -93,6 +94,19 @@ module.exports = gql`
   }
   type EmployeeAddPayload {
     employee: User
+  }
+
+  input EmployeeEntryInput {
+    name: String!
+    role: String!
+  }
+  input EmployeesAddInput {
+    branchId: ID!
+
+    employees: [EmployeeEntryInput!]
+  }
+  type EmployeesAddPayload {
+    employees: [User]
   }
 
   input QuestionCreateInput {

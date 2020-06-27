@@ -67,6 +67,16 @@ class EmployeeAddInput(graphene.InputObjectType):
     role = graphene.String(required=True)
 
 
+class EmployeeEntryInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    role = graphene.String(required=True)
+
+
+class EmployeesAddInput(graphene.InputObjectType):
+    branch_id = graphene.ID(required=True)
+    employees = graphene.List(EmployeeEntryInput)
+    
+
 ############
 # Payloads #
 ############
@@ -86,6 +96,10 @@ class BranchAddPayload(graphene.ObjectType):
 
 class EmployeeAddPayload(graphene.ObjectType):
     employee = graphene.Field(lambda: User)
+
+
+class EmployeesAddPayload(graphene.ObjectType):
+    employees = graphene.List(lambda: User)
 
 
 ############
@@ -164,11 +178,33 @@ class EmployeeAdd(graphene.Mutation):
             return EmployeeAddPayload(employee=user)
 
 
+class EmployeesAdd(graphene.Mutation):
+    class Arguments:
+        input = EmployeesAddInput(required=True)
+
+    Output = EmployeesAddPayload
+
+    def mutate(self, info, input):
+        branch = graphene.Node.get_node_from_global_id(info, input.branch_id)
+
+        if branch is not None:
+            users = []
+            for employee in input.employees:
+                user = models.User(name=employee.name, role=employee.role, branch=branch)
+                users.append(user)
+
+                models.db.session.add(user)
+                models.db.session.commit()
+
+            return EmployeesAddPayload(employees=users)
+
+
 class Mutation(graphene.ObjectType):
     organisation_add = OrganisationAdd.Field()
     division_add = DivisionAdd.Field()
     branch_add = BranchAdd.Field()
     employee_add = EmployeeAdd.Field()
+    employees_add = EmployeesAdd.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
