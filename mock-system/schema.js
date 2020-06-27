@@ -17,8 +17,8 @@ module.exports = gql`
   # MUTATION
 
   type Mutation {
-    signup(input: UserSignupInput!): AuthPayload
-    login(input: UserLoginInput!): AuthPayload
+    signup(input: UserSignupInput!): AuthPayload # done
+    login(input: UserLoginInput!): AuthPayload # done
 
     #organisationCreate(input: OrgCreateInput!): OrgCreatePayload
     
@@ -38,8 +38,8 @@ module.exports = gql`
   input UserSignupInput {
     email: String!
     password: String!
-    name: String!
-    role: String!
+    #name: String!
+    #role: String!
   }
 
   input UserLoginInput {
@@ -62,6 +62,7 @@ module.exports = gql`
   # }
 
   input OrganisationAddInput {
+    token: String!
     name: String!
   }
   type OrganizationAddPayload {
@@ -146,12 +147,15 @@ module.exports = gql`
     id: ID!
     email: String!
     password: String!
-    user: User!
+    token: String!
+    organisation: Organisation!
+    # user: User!
   }
 
   type Organisation implements Node {
     id: ID!
     name: String!
+    admin: Account!
 
     divisions: [Division!]
   }

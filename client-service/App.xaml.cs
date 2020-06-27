@@ -43,7 +43,10 @@ namespace EmployeeCentre {
             var response = await graphQLClient.SendQueryAsync<QueryResponseMe>(request);
             UserModel user = response.Data.Me;
             CancellationToken token = (CancellationToken)state;
-            Timer timer = new Timer(timerCallback, null, 0, 5000);
+            TimerCallback callback = (object state) => {
+                timerResponse(user);
+            };
+            Timer timer = new Timer(callback, null, 0, 5000);
             while (true) {
                 Thread.Sleep(1000);
                 if (token.IsCancellationRequested) {
@@ -52,10 +55,10 @@ namespace EmployeeCentre {
             }
         }
 
-        private void timerCallback(object state) {
+        private void timerResponse(UserModel user) {
             Dispatcher.Invoke(() => {
                 if (Current.MainWindow == null) {
-                    Current.MainWindow = new MainWindow();
+                    Current.MainWindow = new NotificationWindow(new NotificationViewModel(user));
                     Current.MainWindow.Show();
                 } else {
                     Current.MainWindow.Show();

@@ -8,7 +8,7 @@
     </ContextMenu>
 
     <tb:TaskbarIcon x:Key="notifyIcon"
-                    IconSource="images/Smile.ico"
+                    IconSource="images/Icon.ico"
                     ToolTipText="Double click to access control panel"
                     DoubleClickCommand="{Binding showWindowCommand}"
                     ContextMenu="{StaticResource sysTrayMenu}">

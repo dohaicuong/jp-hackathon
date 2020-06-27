@@ -8,14 +8,11 @@
         Height="250" Width="500"
         WindowStyle="None"
         ResizeMode="NoResize">
-    <Window.DataContext>
-        <local:NotificationViewModel/>
-    </Window.DataContext>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <local:PrimaryControl x:Name="ctrlPrimary" Content="{Binding NotificationModel}"/>
+        <local:PrimaryControl x:Name="ctrlPrimary"/>
     </Grid>
 </Window>

@@ -7,14 +7,32 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace EmployeeCentre {
-    class NotificationViewModel : INotifyPropertyChanged {
+    public class NotificationViewModel : INotifyPropertyChanged {
 
-        private DataModel notificationModel = new DataModel();
+        private readonly UserModel _dataModel;
 
-        public CheckBoxModel CheckBoxModel {
+        public NotificationViewModel() {
+
+        }
+
+        public NotificationViewModel(UserModel model) {
+            _dataModel = model;
+        }
+
+        public string TextBody { 
             get {
-                return notificationModel.Checkbox;
-            }
+                return _dataModel.Notification.NotificationQuestion[0].Question.Question ?? "An error has occurred, question is empty";
+            } 
+        }
+
+        public List<ButtonViewModel> Buttons { 
+            get {
+                var buttons = new List<ButtonViewModel>();
+                foreach (QuestionOptionModel option in _dataModel.Notification.NotificationQuestion[0].Question.Options) {
+                    buttons.Add(new ButtonViewModel(option));
+                }
+                return buttons;
+            } 
         }
 
         public ICommand showWindowCommand { 
@@ -52,6 +70,26 @@ namespace EmployeeCentre {
         protected void onPropertyChangeEventHandler(string propertyName) {
             if (PropertyChanged != null) {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+
+    public class ButtonViewModel {
+        private readonly QuestionOptionModel _options;
+        public ButtonViewModel(QuestionOptionModel options) {
+            _options = options;
+        }
+
+        public string Image {
+            get {
+                // return _options.Logo ?? NullImage;
+                return "images/Asleep.ico";
+            }
+        }
+
+        public string NullImage {
+            get {
+                return "images/image-unavailable.png";
             }
         }
     }
