@@ -102,11 +102,10 @@ class Query(graphene.ObjectType):
         return models.QuestionOption.query.all()
 
     def resolve_me(self, info):
-        token = info.context.headers.get('Authorization').split(" ")[1]
-        account = models.Account.query.filter_by(token=token).first()
-        if account is not None:
-            return account
-
+        if info.context.headers.get('Authorization'):
+            token = info.context.headers.get('Authorization').split(" ")[1]
+            return models.Account.query.filter_by(token=token).first()
+            
 
 ##########
 # Inputs #
