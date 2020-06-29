@@ -5,8 +5,6 @@ import { ConcreteRequest } from "relay-runtime";
 export type UserSignupInput = {
     email: string;
     password: string;
-    name: string;
-    role: string;
 };
 export type SignupMutationVariables = {
     input: UserSignupInput;
@@ -14,9 +12,6 @@ export type SignupMutationVariables = {
 export type SignupMutationResponse = {
     readonly signup: {
         readonly token: string;
-        readonly user: {
-            readonly name: string;
-        };
     } | null;
 };
 export type SignupMutation = {
@@ -32,10 +27,6 @@ mutation SignupMutation(
 ) {
   signup(input: $input) {
     token
-    user {
-      name
-      id
-    }
   }
 }
 */
@@ -51,57 +42,37 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "input",
+        "variableName": "input"
+      }
+    ],
+    "concreteType": "AuthPayload",
+    "kind": "LinkedField",
+    "name": "signup",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "token",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "token",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "SignupMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "AuthPayload",
-        "kind": "LinkedField",
-        "name": "signup",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v3/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "Mutation"
   },
   "kind": "Request",
@@ -109,48 +80,16 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "SignupMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "AuthPayload",
-        "kind": "LinkedField",
-        "name": "signup",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v3/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
     "id": null,
     "metadata": {},
     "name": "SignupMutation",
     "operationKind": "mutation",
-    "text": "mutation SignupMutation(\n  $input: UserSignupInput!\n) {\n  signup(input: $input) {\n    token\n    user {\n      name\n      id\n    }\n  }\n}\n"
+    "text": "mutation SignupMutation(\n  $input: UserSignupInput!\n) {\n  signup(input: $input) {\n    token\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '01ab2db1c979caaeecd28e3bf28e36e5';
+(node as any).hash = '73b9faba66962fab946599607f9f9d70';
 export default node;

@@ -27,9 +27,6 @@ const Signup: React.FC<SignupProps> = ({ setLoading }) => {
     mutation SignupMutation($input: UserSignupInput!) {
       signup(input: $input) {
         token
-        user {
-          name
-        }
       }
     }
   `)
@@ -44,10 +41,10 @@ const Signup: React.FC<SignupProps> = ({ setLoading }) => {
         input: data
       },
       onCompleted: (res, errors) => {
-        // if (errors) return errors.forEach(error => enqueueSnackbar(error.message, { variant: 'error' }))
+        if (errors) return errors.forEach(error => enqueueSnackbar(error.message, { variant: 'error' }))
 
-        // const token = res.signup?.token ?? ''
-        // localStorage.setItem('ACCESS_TOKEN', token)
+        const token = res.signup?.token ?? ''
+        localStorage.setItem('ACCESS_TOKEN', token)
         // enqueueSnackbar(`Welcome, ${res?.signup?.user?.name}`, { variant: 'success' })
         enqueueSnackbar(`Welcome, Admin`, { variant: 'success' })
 
@@ -63,20 +60,6 @@ const Signup: React.FC<SignupProps> = ({ setLoading }) => {
           <Typography variant='h5' gutterBottom style={{ textAlign: 'center' }}>
             Create your account
           </Typography>
-          <FormTextField
-            label='Name'
-            name='name'
-            variant='outlined'
-            required
-            style={{ marginBottom: 16 }}
-          />
-          <FormTextField
-            label='Role'
-            name='role'
-            variant='outlined'
-            required
-            style={{ marginBottom: 16 }}
-          />
           <FormTextField
             label='Email'
             name='email'

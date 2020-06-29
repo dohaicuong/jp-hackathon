@@ -5,22 +5,41 @@ import { useParams, useHistory } from 'react-router-dom'
 import FormTextField from 'components/form/FormTextField'
 import AddIcon from '@material-ui/icons/Add'
 import RemoveIcon from '@material-ui/icons/Remove'
+import { useSnackbar } from 'notistack'
+import { useMutation } from 'react-relay/hooks'
+import { graphql } from 'babel-plugin-relay/macro'
+import { EmployeeAddMutation } from './__generated__/EmployeeAddMutation.graphql'
 
-const EmployeeCreate = () => {
-  const [loading, setLoading] = React.useState(false)
-  const { orgId, divisionId, branchId } = useParams<{orgId: string, divisionId: string, branchId: string}>()
+const EmployeeAdd = () => {
+  const { branchId } = useParams<{orgId: string, divisionId: string, branchId: string}>()
   const { push } = useHistory()
-  console.log({ orgId, divisionId, branchId })
+  const { enqueueSnackbar } = useSnackbar()
+
+  const [commit, isOnFly] = useMutation<EmployeeAddMutation>(graphql`
+    mutation EmployeeAddMutation($input: EmployeesAddInput!) {
+      employeesAdd(input: $input) {
+        employees {
+          id
+        }
+      }
+    }
+  `)
 
   const onSubmit = (data: EmployeeCreateFormInputs) => {
     const cleanedEmployees = data.employees.filter(employee => employee.name && employee.role)
-    console.log(cleanedEmployees)
-    setLoading(true)
+    commit({
+      variables: {
+        input: {
+          branchId,
+          employees: cleanedEmployees,
+        }
+      },
+      onCompleted: (res, errors) => {
+        if (errors) return errors.forEach(error => enqueueSnackbar(error.message, { variant: 'error' }))
 
-    setTimeout(() => {
-      setLoading(false)
-      push('/dashboard')
-    }, 1000)
+        push('/dashboard')
+      }
+    })
   }
   const handleSkip = () => {
     push('/dashboard')
@@ -31,13 +50,13 @@ const EmployeeCreate = () => {
       <EmployeeCreateForm
         title='Add your employee'
         onSubmit={onSubmit}
-        loading={loading}
+        loading={isOnFly}
         handleSkip={handleSkip}
       />
     </Container>
   )
 }
-export default EmployeeCreate
+export default EmployeeAdd
 
 type EmployeeCreateFormInputs = {
   employees: EmployeeInputs[]

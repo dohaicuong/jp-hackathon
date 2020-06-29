@@ -18,7 +18,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
           <Component {...props} />
         ) : (
           <Redirect
-            to={{ pathname: '/user/login', state: { from: props.location } }}
+            to={{ pathname: '/user/auth/login', state: { from: props.location } }}
           />
         )
       }

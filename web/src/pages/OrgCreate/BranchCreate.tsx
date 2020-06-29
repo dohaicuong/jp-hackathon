@@ -2,20 +2,45 @@ import React from 'react'
 import { Container } from '@material-ui/core'
 import OrgUnitCreateForm, { OrgUnitCreateFormInputs } from 'components/OrgUnitCreateForm'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
+import { useSnackbar } from 'notistack'
+import { useMutation } from 'react-relay/hooks'
+import { graphql } from 'babel-plugin-relay/macro'
+import { BranchCreateMutation } from './__generated__/BranchCreateMutation.graphql'
 
 const BranchCreate = () => {
-  const [loading, setLoading] = React.useState(false)
-  const { orgId, divisionId } = useParams<{orgId: string, divisionId: string}>()
+  const { divisionId } = useParams<{orgId: string, divisionId: string}>()
   const { push } = useHistory()
   const { url } = useRouteMatch()
-  console.log({ orgId, divisionId })
+  const { enqueueSnackbar } = useSnackbar()
+
+  const [commit, isOnFly] = useMutation<BranchCreateMutation>(graphql`
+    mutation BranchCreateMutation($input: BranchAddInput!) {
+      branchAdd(input: $input) {
+        branch {
+          id
+        }
+      }
+    }
+  `)
+
 
   const onSubmit = (data: OrgUnitCreateFormInputs) => {
-    console.log(data)
-    setLoading(true)
-    setTimeout(() => {
-      push(`${url}/${data.name}`)
-    }, 500)
+    commit({
+      variables: {
+        input: {
+          divisionId,
+          name: data.name
+        }
+      },
+      onCompleted: (res, errors) => {
+        if (errors) return errors.forEach(error => enqueueSnackbar(error.message, { variant: 'error' }))
+
+        const id = res.branchAdd?.branch?.id
+        if(!id) return enqueueSnackbar('Something went wrong please try again', { variant: 'error' })
+
+        push(`${url}/${id}`)
+      }
+    })
   }
   
   return (
@@ -23,7 +48,7 @@ const BranchCreate = () => {
       <OrgUnitCreateForm
         title='Create first branch'
         onSubmit={onSubmit}
-        loading={loading}
+        loading={isOnFly}
       />
     </Container>
   )

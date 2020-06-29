@@ -16,7 +16,8 @@ const network = new RelayNetworkLayer(
     authMiddleware({
       token: () => localStorage.getItem('ACCESS_TOKEN') ?? '',
     })
-  ]
+  ],
+  { noThrow: true }
 )
 
 export default () => {

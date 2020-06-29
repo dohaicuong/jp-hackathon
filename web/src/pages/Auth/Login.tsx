@@ -26,9 +26,9 @@ const Login: React.FC<LoginProps> = ({ setLoading }) => {
     mutation LoginMutation($input: UserLoginInput!) {
       login(input: $input) {
         token
-        user {
-          name
-        }
+        # user {
+        #   name
+        # }
       }
     }
   `)
@@ -43,10 +43,10 @@ const Login: React.FC<LoginProps> = ({ setLoading }) => {
         input: data
       },
       onCompleted: (res, errors) => {
-        // if (errors) return errors.forEach(error => enqueueSnackbar(error.message, { variant: 'error' }))
+        if (errors) return errors.forEach(error => enqueueSnackbar(error.message, { variant: 'error' }))
 
-        // const token = res.login?.token ?? ''
-        // localStorage.setItem('ACCESS_TOKEN', token)
+        const token = res.login?.token ?? ''
+        localStorage.setItem('ACCESS_TOKEN', token)
         // enqueueSnackbar(`Welcome, ${res.login?.user?.name}`, { variant: 'success' })
         enqueueSnackbar(`Welcome, Admin`, { variant: 'success' })
 
